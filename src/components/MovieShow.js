@@ -16,14 +16,14 @@ import { AuthContext } from "./AuthProvider";
 const image =
   "https://static.vecteezy.com/system/resources/previews/005/502/524/original/cinema-background-concept-movie-theater-object-on-red-curtain-background-and-movie-time-with-electric-bulbs-frame-illustration-free-vector.jpg";
 
-function MovieShow({ route }) {
+function MovieShow({ route, navigation }) {
   const Reviews = ({ review }) => {
     return (
       <View key={review.id} style={styles.ratingSection}>
         <Text
           style={styles.username}
           onPress={() =>
-            navigate("UserProfile", {
+            navigation.navigate("UserProfile", {
               userId: review.user.user_id,
             })
           }
@@ -36,7 +36,7 @@ function MovieShow({ route }) {
   };
   const movie = route.params.movie;
   const { user } = React.useContext(AuthContext);
-  const [favriote, setFavorite] = React.useState(movie.favorited);
+  const [favoriote, setFavorite] = React.useState(movie.favorited);
   const [rated, setRated] = React.useState(movie.rated);
   const [rating, setRating] = React.useState(null);
   const [ratingComment, setRatingComment] = React.useState("");
@@ -53,7 +53,7 @@ function MovieShow({ route }) {
     } catch (error) {
       console.log(error);
     }
-    setFavorite(!favriote);
+    setFavorite(!favoriote);
   }
 
   async function rateMovie() {
@@ -89,7 +89,7 @@ function MovieShow({ route }) {
           <TouchableOpacity onPress={favorioted}>
             <FontAwesome
               style={{ flex: 1 }}
-              name={favriote ? "bookmark" : "bookmark-o"}
+              name={favoriote ? "bookmark" : "bookmark-o"}
               size={16}
               color="blue"
             />
