@@ -6,11 +6,11 @@ import MovieShow from "./components/MovieShow";
 
 const MovieStack = createNativeStackNavigator();
 
-function Movies() {
+function Discover() {
   return (
     <MovieStack.Navigator>
       <MovieStack.Screen
-        name="FeedIndex"
+        name="DiscoverIndex"
         component={MoviesIndex}
         options={{ headerShown: false }}
       />
@@ -19,4 +19,4 @@ function Movies() {
   );
 }
 
-export default Movies;
+export default Discover;

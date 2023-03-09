@@ -1,16 +1,9 @@
 import * as React from "react";
-import { Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Movies from "./Movies";
+import Discover from "./Discover";
+import Profile from "./Profile";
 import { Ionicons } from "@expo/vector-icons";
-
-function Discover() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Discover!</Text>
-    </View>
-  );
-}
 
 const Tab = createBottomTabNavigator();
 
@@ -37,7 +30,7 @@ export default function TabNavigation() {
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen name="Movies" component={Movies} />
       <Tab.Screen name="Discover" component={Discover} />
-      <Tab.Screen name="Profile" component={Discover} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
