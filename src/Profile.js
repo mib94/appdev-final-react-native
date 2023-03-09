@@ -4,28 +4,35 @@ import { axiosInstance } from "../utils";
 import { AuthContext } from "./components/AuthProvider";
 
 function Profile() {
-  const { setUser } = React.useContext(AuthContext);
-  const [email, setEmail] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [bio, setBio] = React.useState("");
+  const { user } = React.useContext(AuthContext);
+  const [username, setUsername] = React.useState(user.username);
+  const [bio, setBio] = React.useState(user.bio);
   const [password, setPassword] = React.useState("");
   const [passwordConfirmation, setPasswordConfirmation] = React.useState("");
 
-  async function signUpUser() {
+  async function updateProfile() {
     try {
-      const apiEndPoint = "/users.json";
-      const body = {
-        user: {
-          email: email,
-          username: username,
-          bio: bio,
-          password: password,
-          password_confirmation: passwordConfirmation,
-        },
-      };
-
-      const response = await axiosInstance.post(apiEndPoint, body);
-      setUser(response.data);
+      const apiEndPoint = `/users/${user.id}.json?user_email=${user.email}&user_token=${user.authentication_token}`;
+      let body = {};
+      if (password !== "") {
+        body = {
+          user: {
+            username: username,
+            bio: bio,
+            password: password,
+            password_confirmation: passwordConfirmation,
+          },
+        };
+      } else {
+        body = {
+          user: {
+            username: username,
+            bio: bio,
+          },
+        };
+      }
+      const response = await axiosInstance.put(apiEndPoint, body);
+      console.log(response);
     } catch (error) {
       console.error(error.toJSON());
     }
@@ -33,16 +40,7 @@ function Profile() {
 
   return (
     <View style={styles.form}>
-      <Text>Sign Up!</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={(value) => setEmail(value)}
-        placeholder="Email"
-        textContentType="emailAddress"
-        inputMode="email"
-        keyboardType="email-address"
-      />
+      <Text>Profile</Text>
       <TextInput
         style={styles.input}
         value={username}
@@ -72,7 +70,7 @@ function Profile() {
         textContentType="password"
         secureTextEntry={true}
       />
-      <Button title="Sign up" onPress={signUpUser} />
+      <Button title="Update" onPress={updateProfile} />
     </View>
   );
 }
