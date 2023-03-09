@@ -14,7 +14,7 @@ import { FontAwesome } from "@expo/vector-icons";
 const image =
   "https://static.vecteezy.com/system/resources/previews/005/502/524/original/cinema-background-concept-movie-theater-object-on-red-curtain-background-and-movie-time-with-electric-bulbs-frame-illustration-free-vector.jpg";
 
-function Movie({ movie, navigate }) {
+function Movie({ movie, navigate, userMovies, profileId }) {
   const { user } = React.useContext(AuthContext);
   const [favriote, setFavorite] = React.useState(movie.favorited);
 
@@ -33,6 +33,17 @@ function Movie({ movie, navigate }) {
     }
     setFavorite(!favriote);
   }
+
+  const getReview = (reviews) => {
+    if (userMovies) {
+      let foundReview = reviews.find(
+        (review) => review.user.user_id === profileId
+      );
+      return foundReview;
+    } else {
+      return reviews[reviews.length - 1];
+    }
+  };
 
   return (
     <View style={styles.movie}>
@@ -57,26 +68,24 @@ function Movie({ movie, navigate }) {
           <Image style={styles.image} source={{ uri: image }} />
         </View>
       </TouchableOpacity>
-      {movie.reviews.length >= 1 && (
+      {getReview(movie.reviews) && (
         <View style={styles.ratingSection}>
           <View style={styles.reviews}>
             <Text style={styles.recentReview}>
-              Rating: {movie.reviews[movie.reviews.length - 1].rating}
+              Rating: {getReview(movie.reviews)?.rating}
             </Text>
           </View>
           <Text
             onPress={() =>
               navigate("UserProfile", {
-                userId: movie.reviews[movie.reviews.length - 1].user.user_id,
+                userId: getReview(movie.reviews)?.user.user_id,
               })
             }
             style={styles.username}
           >
-            {movie.reviews[movie.reviews.length - 1].user.username}
+            {getReview(movie.reviews)?.user.username}
           </Text>
-          <Text style={styles.rating}>
-            {movie.reviews[movie.reviews.length - 1].text}
-          </Text>
+          <Text style={styles.rating}>{getReview(movie.reviews)?.text}</Text>
         </View>
       )}
     </View>
@@ -88,6 +97,7 @@ function MoviesIndex({
   route,
   userMovies = null,
   title = null,
+  profileId = null,
 }) {
   const [movies, setMovies] = React.useState([]);
   const { user } = React.useContext(AuthContext);
@@ -122,7 +132,14 @@ function MoviesIndex({
     <View>
       <FlatList
         data={movies}
-        renderItem={({ item }) => <Movie movie={item} navigate={navigate} />}
+        renderItem={({ item }) => (
+          <Movie
+            movie={item}
+            navigate={navigate}
+            userMovies={userMovies && userMovies.length >= 0}
+            profileId={profileId}
+          />
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.contentContainer}
         ListHeaderComponent={ListHeader}

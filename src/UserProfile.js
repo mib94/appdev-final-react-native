@@ -43,6 +43,7 @@ function UserProfile({ route, navigation }) {
           userMovies={profile.favorited_movies}
           navigation={navigation}
           title={"Favorite Movies"}
+          profileId={profile.id}
         />
       </View>
     );
@@ -53,7 +54,8 @@ function UserProfile({ route, navigation }) {
       <View>
         <Button title="Follow" onPress={() => sendFollowRequest()} />
         <Text>
-          You need to follow to see {profile.username}s Favorite movie list
+          You need to follow @{profile.username} to see their list of favorite
+          movies
         </Text>
       </View>
     );
@@ -80,6 +82,7 @@ function UserProfile({ route, navigation }) {
           userMovies={profile.favorited_movies}
           navigation={navigation}
           title={"My Favorite Movies"}
+          profileId={profile.id}
         />
       </View>
     );
