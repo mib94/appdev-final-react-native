@@ -10,11 +10,14 @@ import {
 import { axiosInstance } from "../utils";
 import { AntDesign } from "@expo/vector-icons";
 import { AuthContext } from "./components/AuthProvider";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const MovieStack = createNativeStackNavigator();
 
 const image =
   "https://static.vecteezy.com/system/resources/previews/005/502/524/original/cinema-background-concept-movie-theater-object-on-red-curtain-background-and-movie-time-with-electric-bulbs-frame-illustration-free-vector.jpg";
 
-function Movie({ movie }) {
+function Movie({ movie, navigate }) {
   const [favriote, setFavorite] = React.useState(false);
 
   const favorioted = () => {
@@ -34,9 +37,11 @@ function Movie({ movie }) {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.imageWrapper}>
-        <Image style={styles.image} source={{ uri: image }} />
-      </View>
+      <TouchableOpacity onPress={() => navigate("MovieShow", { movie: movie })}>
+        <View style={styles.imageWrapper}>
+          <Image style={styles.image} source={{ uri: image }} />
+        </View>
+      </TouchableOpacity>
       <View style={styles.reviews}>
         <Text style={styles.recentReview}>
           Average Rating: {movie.average_rating}
@@ -57,7 +62,7 @@ function Movie({ movie }) {
   );
 }
 
-function Movies() {
+function MoviesIndex({ navigation: { navigate } }) {
   const [movies, setMovies] = React.useState([]);
   const { user } = React.useContext(AuthContext);
 
@@ -83,11 +88,33 @@ function Movies() {
     <View>
       <FlatList
         data={movies}
-        renderItem={({ item }) => <Movie movie={item} />}
+        renderItem={({ item }) => <Movie movie={item} navigate={navigate} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.contentContainer}
         ListHeaderComponent={ListHeader}
       />
+    </View>
+  );
+}
+
+function Movies() {
+  return (
+    <MovieStack.Navigator>
+      <MovieStack.Screen
+        name="MoviesIndex"
+        component={MoviesIndex}
+        options={{ headerShown: false }}
+      />
+      <MovieStack.Screen name="MovieShow" component={MovieShow} />
+    </MovieStack.Navigator>
+  );
+}
+
+function MovieShow({ route }) {
+  console.log("route", route);
+  return (
+    <View>
+      <Text>I have movie</Text>
     </View>
   );
 }

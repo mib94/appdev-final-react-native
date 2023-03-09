@@ -1,8 +1,9 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SignIn from "./src/SignIn";
-import HomeScreen from "./src/HomeScreen";
-import { AuthContext } from "./src/components/AuthProvider";
+import { NavigationContainer } from "@react-navigation/native";
+import { AuthContext } from "./components/AuthProvider";
+import AuthNavigation from "./AuthNavigation";
+import TabNavigation from "./TabNavigation";
 
 export default function Navigation() {
   const { user } = React.useContext(AuthContext);
@@ -35,5 +36,9 @@ export default function Navigation() {
     saveUser(user);
   }, [user]);
 
-  return user ? <HomeScreen user={user} /> : <SignIn setUser={setUser} />;
+  return (
+    <NavigationContainer>
+      {user ? <TabNavigation /> : <AuthNavigation />}
+    </NavigationContainer>
+  );
 }
