@@ -1,8 +1,10 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet, Button } from "react-native";
 import { axiosInstance } from "../utils";
+import { AuthContext } from "./components/AuthProvider";
 
-function SignIn({ setUser }) {
+function SignIn() {
+  const { setUser } = React.useContext(AuthContext);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
