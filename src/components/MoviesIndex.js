@@ -87,10 +87,11 @@ function MoviesIndex({
   navigation: { navigate },
   route,
   userMovies = null,
-  title = "Movies",
+  title = null,
 }) {
   const [movies, setMovies] = React.useState([]);
   const { user } = React.useContext(AuthContext);
+  title = title ? title : route.name === "DiscoverIndex" ? "Discover" : "Feed";
 
   function ListHeader() {
     return <Text style={styles.title}>{title}</Text>;

@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 30,
-    color: "blue",
+    color: "royalblue",
     fontWeight: "500",
     textAlign: "center",
   },

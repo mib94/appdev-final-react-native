@@ -20,7 +20,14 @@ function MovieShow({ route }) {
   const Reviews = ({ review }) => {
     return (
       <View key={review.id} style={styles.ratingSection}>
-        <Text style={styles.username}>
+        <Text
+          style={styles.username}
+          onPress={() =>
+            navigate("UserProfile", {
+              userId: review.user.user_id,
+            })
+          }
+        >
           {review.user.username} ({review.rating} Stars)
         </Text>
         <Text style={styles.rating}>{review.text}</Text>
@@ -43,7 +50,6 @@ function MovieShow({ route }) {
         },
       };
       const response = await axiosInstance.post(apiEndPoint, body);
-      console.log("res", response);
     } catch (error) {
       console.log(error);
     }
@@ -65,10 +71,11 @@ function MovieShow({ route }) {
           text: ratingComment,
         },
       };
-      setRated(true);
       const response = await axiosInstance.post(apiEndPoint, body);
       console.log("res", response);
+      setRated(true);
     } catch (error) {
+      setRated(false);
       alert("Please add numeric and values between 1-5");
       console.log(JSON.stringify(error));
     }
