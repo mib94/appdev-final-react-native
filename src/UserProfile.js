@@ -37,7 +37,7 @@ function UserProfile({ route, navigation }) {
 
   function followedProfile() {
     return (
-      <View style={{ marginTop: 12, padding: 20 }}>
+      <View style={{ padding: 5, marginBottom: 130, marginTop: 12 }}>
         <Text>You are following @{profile.username}</Text>
         <MoviesIndex
           userMovies={profile.favorited_movies}
@@ -71,7 +71,7 @@ function UserProfile({ route, navigation }) {
 
   if (profile.id === user.id) {
     return (
-      <View style={{ padding: 5 }}>
+      <View style={{ padding: 5, marginBottom: 230 }}>
         <Text style={styles.username}>@{profile.username}</Text>
         <Button title="Logout" onPress={() => setUser(null)} />
         <Button
