@@ -1,11 +1,9 @@
 import React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import SignIn from "./src/SignIn";
-import HomeScreen from "./src/HomeScreen";
-import { AuthContext } from "./src/components/AuthProvider";
 
-export default function Navigation() {
-  const { user } = React.useContext(AuthContext);
+export const AuthContext = React.createContext();
+
+function AuthProvider({ children }) {
+  const [user, setUser] = React.useState(null);
 
   async function saveUser(value) {
     try {
@@ -35,5 +33,16 @@ export default function Navigation() {
     saveUser(user);
   }, [user]);
 
-  return user ? <HomeScreen user={user} /> : <SignIn setUser={setUser} />;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
+
+export default AuthProvider;

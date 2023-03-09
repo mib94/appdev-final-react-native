@@ -2,10 +2,10 @@ import React from "react";
 import { View } from "react-native";
 import Movies from "./Movies";
 
-function HomeScreen({ user }) {
+function HomeScreen() {
   return (
     <View>
-      <Movies user={user} />
+      <Movies />
     </View>
   );
 }
