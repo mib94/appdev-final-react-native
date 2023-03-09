@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { axiosInstance } from "../../utils";
-import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { AuthContext } from "./AuthProvider";
 
 const image =
@@ -30,6 +30,9 @@ function MovieShow({ route }) {
   const movie = route.params.movie;
   const { user } = React.useContext(AuthContext);
   const [favriote, setFavorite] = React.useState(movie.favorited);
+  const [rated, setRated] = React.useState(movie.rated);
+  const [rating, setRating] = React.useState(null);
+  const [ratingComment, setRatingComment] = React.useState("");
 
   async function favorioted() {
     try {
@@ -47,46 +50,81 @@ function MovieShow({ route }) {
     setFavorite(!favriote);
   }
 
+  async function rateMovie() {
+    if (rating === null) {
+      alert("Add rating between 1-5");
+      return false;
+    }
+    try {
+      const apiEndPoint = `/reviews.json?user_email=${user.email}&user_token=${user.authentication_token}`;
+      const body = {
+        review: {
+          movie_id: movie.id,
+          user_id: user.id,
+          rating: rating,
+          text: ratingComment,
+        },
+      };
+      setRated(true);
+      const response = await axiosInstance.post(apiEndPoint, body);
+      console.log("res", response);
+    } catch (error) {
+      alert("Please add numeric and values between 1-5");
+      console.log(JSON.stringify(error));
+    }
+  }
+
   return (
-    <ScrollView style={styles.movie}>
-      <View style={{ flexDirection: "row" }}>
-        <Text style={styles.moviename}>{movie.title}</Text>
-        <TouchableOpacity onPress={favorioted}>
-          <AntDesign
-            name={favriote ? "heart" : "hearto"}
-            color="deeppink"
-            style={{ flex: 1 }}
-            size={14}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.imageWrapper}>
-        <Image style={styles.image} source={{ uri: image }} />
-      </View>
-      <View style={styles.reviews}>
-        <Text style={styles.recentReview}>
-          Average Rating: {movie.average_rating}
-        </Text>
-      </View>
-      <View style={styles.descriptionSection}>
-        <Text style={styles.description}>Description</Text>
-        <Text style={styles.recentReview}>{movie.description}</Text>
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <Text>Rate the Movie</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Rate between 1-5"
-          maxLength={1}
-          keyboardType="numeric"
-        />
-        <TextInput style={styles.input} placeholder="Comment" />
-        <Button title="Rate" />
-      </View>
-      {movie.reviews.map((review) => {
-        return <Reviews review={review} key={review.id} />;
-      })}
-    </ScrollView>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.movie}>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.moviename}>{movie.title}</Text>
+          <TouchableOpacity onPress={favorioted}>
+            <FontAwesome
+              style={{ flex: 1 }}
+              name={favriote ? "bookmark" : "bookmark-o"}
+              size={16}
+              color="blue"
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.imageWrapper}>
+          <Image style={styles.image} source={{ uri: image }} />
+        </View>
+        <View style={styles.reviews}>
+          <Text style={styles.recentReview}>
+            Average Rating: {movie.average_rating}
+          </Text>
+        </View>
+        <View style={styles.descriptionSection}>
+          <Text style={styles.description}>Description</Text>
+          <Text style={styles.recentReview}>{movie.description}</Text>
+        </View>
+        {!rated && (
+          <View style={{ marginTop: 10 }}>
+            <Text>Rate the Movie</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Rate between 1-5"
+              maxLength={1}
+              keyboardType="numeric"
+              value={rating}
+              onChangeText={(value) => setRating(value)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Comment"
+              value={ratingComment}
+              onChangeText={(value) => setRatingComment(value)}
+            />
+            <Button title="Rate" onPress={() => rateMovie()} />
+          </View>
+        )}
+        {movie.reviews.map((review) => {
+          return <Reviews review={review} key={review.id} />;
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -105,6 +143,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "gainsboro",
     width: "100%",
+    height: "100%",
   },
   imageWrapper: {
     height: 225,
@@ -135,6 +174,7 @@ const styles = StyleSheet.create({
   },
   ratingSection: {
     marginTop: 12,
+    marginBottom: 32,
   },
   input: {
     height: 40,

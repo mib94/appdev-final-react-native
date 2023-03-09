@@ -2,7 +2,7 @@ import * as React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Movies from "./Movies";
 import Discover from "./Discover";
-import Profile from "./Profile";
+import User from "./User";
 import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
@@ -10,7 +10,7 @@ const Tab = createBottomTabNavigator();
 const TAB_ICON = {
   Movies: "browsers",
   Discover: "md-compass",
-  Profile: "people",
+  User: "people",
 };
 
 const screenOptions = ({ route }) => {
@@ -30,7 +30,7 @@ export default function TabNavigation() {
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen name="Movies" component={Movies} />
       <Tab.Screen name="Discover" component={Discover} />
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name="User" component={User} />
     </Tab.Navigator>
   );
 }

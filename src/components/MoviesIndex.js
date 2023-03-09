@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { axiosInstance } from "../../utils";
 import { AuthContext } from "./AuthProvider";
-import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 const image =
   "https://static.vecteezy.com/system/resources/previews/005/502/524/original/cinema-background-concept-movie-theater-object-on-red-curtain-background-and-movie-time-with-electric-bulbs-frame-illustration-free-vector.jpg";
@@ -44,11 +44,11 @@ function Movie({ movie, navigate }) {
           {movie.title}
         </Text>
         <TouchableOpacity onPress={favorioted}>
-          <AntDesign
-            name={favriote ? "heart" : "hearto"}
-            color="deeppink"
+          <FontAwesome
             style={{ flex: 1 }}
-            size={14}
+            name={favriote ? "bookmark" : "bookmark-o"}
+            size={16}
+            color="blue"
           />
         </TouchableOpacity>
       </View>
@@ -57,16 +57,22 @@ function Movie({ movie, navigate }) {
           <Image style={styles.image} source={{ uri: image }} />
         </View>
       </TouchableOpacity>
-      <View style={styles.reviews}>
-        <Text style={styles.recentReview}>
-          Average Rating: {movie.average_rating}
-        </Text>
-      </View>
       {movie.reviews.length >= 1 && (
         <View style={styles.ratingSection}>
-          <Text style={styles.username}>
-            {movie.reviews[movie.reviews.length - 1].user.username} (
-            {movie.reviews[movie.reviews.length - 1].rating})
+          <View style={styles.reviews}>
+            <Text style={styles.recentReview}>
+              Rating: {movie.reviews[movie.reviews.length - 1].rating}
+            </Text>
+          </View>
+          <Text
+            onPress={() =>
+              navigate("UserProfile", {
+                userId: movie.reviews[movie.reviews.length - 1].user.user_id,
+              })
+            }
+            style={styles.username}
+          >
+            {movie.reviews[movie.reviews.length - 1].user.username}
           </Text>
           <Text style={styles.rating}>
             {movie.reviews[movie.reviews.length - 1].text}
@@ -77,24 +83,33 @@ function Movie({ movie, navigate }) {
   );
 }
 
-function MoviesIndex({ navigation: { navigate }, route }) {
+function MoviesIndex({
+  navigation: { navigate },
+  route,
+  userMovies = null,
+  title = "Movies",
+}) {
   const [movies, setMovies] = React.useState([]);
   const { user } = React.useContext(AuthContext);
 
   function ListHeader() {
-    return <Text style={styles.title}>Movies</Text>;
+    return <Text style={styles.title}>{title}</Text>;
   }
 
   async function getMovies() {
-    try {
-      let apiEndPoint = `/feed.json?user_email=${user.email}&user_token=${user.authentication_token}`;
-      if (route.name === "DiscoverIndex") {
-        apiEndPoint = `/discover.json?user_email=${user.email}&user_token=${user.authentication_token}`;
+    if (userMovies && userMovies.length >= 0) {
+      setMovies(userMovies);
+    } else {
+      try {
+        let apiEndPoint = `/feed.json?user_email=${user.email}&user_token=${user.authentication_token}`;
+        if (route.name === "DiscoverIndex") {
+          apiEndPoint = `/discover.json?user_email=${user.email}&user_token=${user.authentication_token}`;
+        }
+        const response = await axiosInstance.get(apiEndPoint);
+        setMovies(response.data);
+      } catch (error) {
+        console.log(error);
       }
-      const response = await axiosInstance.get(apiEndPoint);
-      setMovies(response.data);
-    } catch (error) {
-      console.log(error);
     }
   }
 
@@ -156,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   recentReview: {
-    marginLeft: 6,
+    marginBottom: 5,
   },
   ratingSection: {
     marginTop: 12,
